@@ -1,1 +1,0 @@
-//This test cases is written for login page of the application
