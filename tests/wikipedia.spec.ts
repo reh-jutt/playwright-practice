@@ -22,5 +22,6 @@ test('test', async ({ page }) => {
   await page.getByRole('button', { name: 'Search' }).click();
   await page.goto('https://www.wikipedia.org/');
   await page.getByRole('link', { name: 'Português 1.155.000+ artigos' }).click();
-  await page.getByRole('link', { name: 'Wiki Loves Monuments:' }).click();
+    await page.getByRole('banner').getByRole('link', { name: 'Wikipédia' }).click();
+  await expect(page).toHaveURL('https://pt.wikipedia.org/wiki/Wikip%C3%A9dia:P%C3%A1gina_principal');
 });
