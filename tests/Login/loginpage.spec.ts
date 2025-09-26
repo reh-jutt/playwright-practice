@@ -80,7 +80,7 @@ test.describe('Login Module Tests', () => {
   });
 
   test('Login with valid credentials', async ({ page }) => {
-    await performLogin(page, 'tomsmith', 'SuperSecretPasswords!');
+    await performLogin(page, 'tomsmith', 'SuperSecretPassword!');
   });
 
 });
