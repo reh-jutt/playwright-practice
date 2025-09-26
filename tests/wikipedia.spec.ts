@@ -16,7 +16,7 @@ test('wikipedia test case', async ({page})=>{
 })
 
 test('test', async ({ page }) => {
-  await page.goto('https://www.wikipedia.org/');
+  // await page.goto('https://www.wikipedia.org/');
   await expect(page.getByRole('heading')).toContainText('The Free Encyclopedi');
   await page.getByRole('searchbox', { name: 'Search Wikipedia' }).click();
   await page.getByRole('button', { name: 'Search' }).click();
