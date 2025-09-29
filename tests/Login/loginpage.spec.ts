@@ -71,12 +71,14 @@ import { test } from '@playwright/test';
 import { LoginPage } from '../Pages/loginpage';
 import  { performLogin } from '../Helper/utils';
 
+
 test.describe('Login Module Tests', () => {
 
   test('Verify Login Page UI', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.verifyLoginPageUI();
+    await loginPage.verifyFooterLink();
   });
 
   test('Login with valid credentials', async ({ page }) => {
@@ -84,4 +86,4 @@ test.describe('Login Module Tests', () => {
   });
 
 });
-// --- IGNORE ---
+// --- IGNORE ---   

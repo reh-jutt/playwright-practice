@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { performLogin } from '../Helper/utils';
+import { verifyFooterSection } from '../Helper/footersection';
 
 test.describe('Home Page Tests', () => {
 
@@ -10,6 +11,7 @@ test.describe('Home Page Tests', () => {
 
   test('Verify Home Page heading', async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Secure Area", level: 2 })).toHaveText("Secure Area");
+    await verifyFooterSection(page);
   });
 
 });
