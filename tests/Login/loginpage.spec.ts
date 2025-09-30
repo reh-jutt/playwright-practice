@@ -1,3 +1,64 @@
+import { test } from "@playwright/test";
+import { Loginpage } from "../Pages/loginpage";
+// import  { performLogin } from '../Helper/utils';
+
+test.describe("Login Pages Test Cases", () => {
+  let loginpage: Loginpage;
+  test.beforeEach(async ({ page }) => {
+    loginpage = new Loginpage(page);
+    await loginpage.goto();
+  });
+
+  test("Verify Login Page UI", async ({ page }) => {
+    await loginpage.verifyLoginPageUI();
+    await loginpage.verifyFooterLink();
+  });
+  test("Login with valid credentials", async ({ page }) => {
+    await loginpage.verifyLogin("tomsmith", "SuperSecretPassword!");
+    await loginpage.verifySuccessfulLogin();
+  });
+  test("Login with invalid credentials", async ({ page }) => {
+    await loginpage.verifyLogin("tomsmiths", "SuperSecretPasswords!");
+    await loginpage.verifyUnsuccessfulLogin();
+  });
+  test("Login with invalid username", async ({ page }) => {
+    await loginpage.verifyLogin("tomsmiths", "SuperSecretPassword!");
+    await loginpage.verifyUnsuccessfulLogin();
+  });
+  test("Login with invalid password", async ({ page }) => {
+    await loginpage.verifyLogin("tomsmith", "SuperSecretPasswords!");
+    await loginpage.verifyUnsuccessfulLogin();
+  });
+  test("Login with blank username and password", async ({ page }) => {
+    await loginpage.verifyLogin("", "");
+    await loginpage.verifyUnsuccessfulLogin();
+  });
+});
+
+//  Login Page test cases using Page Object Model (POM) and helper functions
+
+// import { test } from '@playwright/test';
+// import { LoginPage } from '../Pages/loginpage';
+// import  { performLogin } from '../Helper/utils';
+
+// test.describe('Login Module Tests', () => {
+
+//   test('Verify Login Page UI', async ({ page }) => {
+//     const loginPage = new LoginPage(page);
+//     await loginPage.goto();
+//     await loginPage.verifyLoginPageUI();
+//     await loginPage.verifyFooterLink();
+//   });
+
+//   test('Login with valid credentials', async ({ page }) => {
+//     await performLogin(page, 'tomsmith', 'SuperSecretPassword!');
+//   });
+
+// });
+// --- IGNORE ---
+
+// Simple test case without POM and helper functions
+
 // //This test cases is written for login page of the application
 // import { test, expect } from "@playwright/test";
 
@@ -64,26 +125,3 @@
 
 //   // --- IGNORE ---
 // });
-
-
-
-import { test } from '@playwright/test';
-import { LoginPage } from '../Pages/loginpage';
-import  { performLogin } from '../Helper/utils';
-
-
-test.describe('Login Module Tests', () => {
-
-  test('Verify Login Page UI', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.verifyLoginPageUI();
-    await loginPage.verifyFooterLink();
-  });
-
-  test('Login with valid credentials', async ({ page }) => {
-    await performLogin(page, 'tomsmith', 'SuperSecretPassword!');
-  });
-
-});
-// --- IGNORE ---   

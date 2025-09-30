@@ -1,9 +1,9 @@
-import { Page } from '@playwright/test';
-import { LoginPage } from '../Pages/loginpage';
+// Helper/utils.ts
+import { Loginpage } from "../Pages/loginpage";
 
-export async function performLogin(page: Page, username: string, password: string) {
-  const loginPage = new LoginPage(page);
+export async function loginAsValidUser(page) {
+  const loginPage = new Loginpage(page);
   await loginPage.goto();
-  await loginPage.login(username, password);
+  await loginPage.verifyLogin("tomsmith", "SuperSecretPassword!");
   await loginPage.verifySuccessfulLogin();
 }
