@@ -23,15 +23,17 @@ function askFilter() {
 }
 
 // ---------- Paths ----------
-const reportJsonPath = path.join(process.cwd(), 'playwright-report', 'report.json');
-const outputPdfPath = path.join(process.cwd(), 'playwright-report', 'playwright-report.pdf');
+const reportDir = path.join(process.cwd(), 'playwright-report');
+const reportJsonPath = path.join(reportDir, 'report.json');
+const outputPdfPath = path.join(reportDir, 'playwright-report.pdf');
+
+// ---------- Backup folder ----------
+const backupDir = path.join(reportDir, 'backup', 'pdf');
+if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
 
 // ---------- Screenshots Folder ----------
 const screenshotsDir = path.join(process.cwd(), 'screenshots');
-if (!fs.existsSync(screenshotsDir)) {
-  console.log('📂 screenshots folder not found. Creating one…');
-  fs.mkdirSync(screenshotsDir);
-}
+if (!fs.existsSync(screenshotsDir)) fs.mkdirSync(screenshotsDir);
 
 // ---------- Check report.json ----------
 if (!fs.existsSync(reportJsonPath)) {
@@ -40,6 +42,20 @@ if (!fs.existsSync(reportJsonPath)) {
 }
 
 const report = JSON.parse(fs.readFileSync(reportJsonPath, 'utf8'));
+
+// ---------- Helper: Timestamp ----------
+function timestamp() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+
+// ---------- Backup existing PDF ----------
+if (fs.existsSync(outputPdfPath)) {
+  const backupPath = path.join(backupDir, `playwright-report_${timestamp()}.bak.pdf`);
+  fs.copyFileSync(outputPdfPath, backupPath);
+  console.log(`Existing PDF backed up: ${backupPath}`);
+}
 
 // ---------- Main Function ----------
 async function generateReport() {
@@ -74,7 +90,7 @@ async function generateReport() {
     doc.fontSize(10).fillColor('#555').text(`File: ${file}`);
     doc.fontSize(10).text(`Status: ${status.toUpperCase()}`);
     doc.fontSize(10).text(`Duration: ${duration} ms`);
-    doc.fontSize(10).text(`Started: ${new Date(startTime).toLocaleString()}`);
+    if (startTime) doc.fontSize(10).text(`Started: ${new Date(startTime).toLocaleString()}`);
     doc.moveDown(0.5);
 
     // Errors
@@ -89,39 +105,44 @@ async function generateReport() {
     if (attachments && attachments.length > 0) {
       doc.moveDown(0.5);
       doc.fontSize(12).fillColor('#000').text('Attachments:');
-      attachments.forEach(att => {
+      for (const att of attachments) {
         if (att.name === 'screenshot' && att.path && fs.existsSync(att.path)) {
           doc.fontSize(10).fillColor('#000').text(`Screenshot:`);
           try {
             doc.image(att.path, { fit: [400, 300], align: 'center' });
-          } catch {
+          } catch (err) {
             doc.fontSize(10).fillColor('red').text(`(Could not embed image: ${att.path})`);
           }
-        } else if (att.name === 'video') {
-          doc.fontSize(10).fillColor('#000').text(`Video: ${att.path}`);
-        } else if (att.name === 'trace') {
-          doc.fontSize(10).fillColor('#000').text(`Trace: ${att.path}`);
         }
-      });
+
+        // Trace / Video commented for future use
+        // else if (att.name === 'trace') {
+        //   doc.fontSize(10).fillColor('#000').text(`Trace: ${att.path}`);
+        // }
+        // else if (att.name === 'video') {
+        //   doc.fontSize(10).fillColor('#000').text(`Video: ${att.path}`);
+        // }
+      }
     }
     doc.moveDown(1);
   }
 
   // ---------- Loop Tests ----------
-  report.suites?.forEach(suite => {
-    suite.suites?.forEach(innerSuite => {
-      innerSuite.specs?.forEach(spec => {
-        spec.tests?.forEach(testItem => {
-          testItem.results?.forEach(result => {
+  for (const suite of report.suites || []) {
+    for (const innerSuite of suite.suites || []) {
+      for (const spec of innerSuite.specs || []) {
+        for (const testItem of spec.tests || []) {
+          for (const result of testItem.results || []) {
             addTestDetails(spec, result);
-          });
-        });
-      });
-    });
-  });
+          }
+        }
+      }
+    }
+  }
 
   doc.end();
   console.log(`✅ PDF generated at: ${outputPdfPath}`);
 }
 
 generateReport();
+// ---------- End ----------

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "playwright test",
     "report:csv": "node tools/report-json-to-csv.js",
-    "report:pdf": "node tools/report-html-to-pdf.js"
+    "report:pdf": "node tools/report-html-to-pdf.js",
+    "report:excel": "node tools/report-json-to-excel.js"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,9 @@
     "@types/node": "^24.5.2"
   },
   "dependencies": {
+    "exceljs": "^4.4.0",
     "pdfkit": "^0.17.2",
-    "puppeteer": "^24.22.3"
+    "puppeteer": "^24.22.3",
+    "sharp": "^0.34.4"
   }
 }
