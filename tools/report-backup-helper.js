@@ -4,7 +4,7 @@ import path from 'path';
 /**
  * Backup existing file to backup folder with timestamp
  * @param {string} filePath - full path of file to backup
- * @param {string} subFolder - 'excel' or 'csv'
+ * @param {string} subFolder - 'excel' or 'csv' or 'pdf' (optional)
  * @returns {string} backup path
  */
 export function backupFile(filePath, subFolder = '') {
